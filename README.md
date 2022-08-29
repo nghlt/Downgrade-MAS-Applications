@@ -70,7 +70,7 @@ https://p*-buy.itunes.apple.com/WebObjects/MZBuy.woa/wa/buyProduct?guid*
 
 - Re-download the app again, Proxyman will show a window of breakpoint. Insert the code block on Step 4 into request body
 
-![](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/modify-request-body)
+![](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/main/Images/modify-request-body.png)
 
 7. Stop disable-ssl-pinning script
 
