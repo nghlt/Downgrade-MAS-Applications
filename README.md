@@ -40,12 +40,12 @@ frida appstoreagent -l ./Downloads/disable_ssl_pinning.js
 
 - Click on the Download button from App Store to start download your app. After downloaded, MAS failed to install the app because of SSL verification.
 
-- Look at response of a requestm like this: 
+- Look at response of a request like this: 
 
 ```
 https://p41-buy.itunes.apple.com/WebObjects/MZBuy.woa/wa/buyProduct?guid=*
 ```
- from `appstoreagent` on Proxyman, try to find the key `softwareVersionExternalIdentifiers`. There is a list of app version IDs under this key. The newest version is at the bottom. Choose the version that you want to downgrade.
+ from `appstoreagent` process on Proxyman, try to find the key `softwareVersionExternalIdentifiers`. There is a list of app version IDs under this key. The newest version is at the bottom. Choose the version that you want to downgrade.
 
 ![](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/app-version-ids.png)
 
@@ -74,12 +74,16 @@ https://p*-buy.itunes.apple.com/WebObjects/MZBuy.woa/wa/buyProduct?guid*
 
 7. Stop disable-ssl-pinning script
 
-- Close terminal windows that disable SSL Pinning on `appstoreagent` from step 2.
+- Close terminal windows that disable SSL Pinning on `appstoreagent` from Step 2.
 
 8. Execute the breakpoint
 
-- Click on Execute button of Breakpoint windows from step 6. Your target app will be downloaded and installed with the lower version that you choose.
+- Click on Execute button of Breakpoint windows from Step 6. Your target app will be downloaded and installed with the lower version that you choose.
 
 ## Acknowledgement
 
 - [Azenla](https://gist.github.com/azenla/37f941de24c5dfe46f3b8e93d94ce909)
+
+---
+
+![https://paypal.me/ltn119412](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/main/Images/buy-me-a-coffee.png)
