@@ -86,4 +86,4 @@ https://p*-buy.itunes.apple.com/WebObjects/MZBuy.woa/wa/buyProduct?guid*
 
 ---
 
-![https://paypal.me/ltn119412](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/main/Images/buy-me-a-coffee.png)
+<a href="https://paypal.me/ltn119412" target="_blank"><img src="https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/main/Images/buy-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
