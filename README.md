@@ -6,9 +6,16 @@ An introduction to downgrade a specific application from MAS
 
 - Already purchased the target application
 - [`disable-ssl-pinning.js`](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Scripts/disable-ssl-pinning.js)
-- Disable SIP
-- Install [Frida](https://frida.re/)
-- Install [Proxyman](https://proxyman.io/) or [Charles Proxy](https://www.charlesproxy.com/) then install and trust its Root Certificate
+- SIP disable
+- Frida tools
+```
+pip install frida-tools
+```
+or 
+```
+pip3 install frida-tools
+```
+- [Proxyman](https://proxyman.io/) or [Charles Proxy](https://www.charlesproxy.com/). Installed and trusted its Root Certificate
 
 ## Downgrading
 
