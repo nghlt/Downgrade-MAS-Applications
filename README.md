@@ -1,96 +1,102 @@
-# Downgrading Mac App Store (MAS) Applications
+# How to Downgrade Mac App Store (MAS) Applications
 
-An introduction to downgrade a specific application from MAS
+This guide provides instructions on how to downgrade a specific application from the Mac App Store (MAS).
 
 ## Requirements
 
-- Already purchased the target application
-- [`disable-ssl-pinning.js`](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Scripts/disable-ssl-pinning.js)
-- SIP disable
-- Frida tools
-```
-pip install frida-tools
-```
-or 
-```
-pip3 install frida-tools
-```
-- [Proxyman](https://proxyman.io/) or [Charles Proxy](https://www.charlesproxy.com/). Installed and trusted its Root Certificate
+Before you begin, make sure you meet the following requirements:
+
+- You have already purchased the target application on the MAS.
+- You have the `disable-ssl-pinning.js` script, which can be downloaded [here](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Scripts/disable-ssl-pinning.js).
+- System Integrity Protection (SIP) is disabled on your Mac. For a detailed instruction on how to disable System Integrity Protection (SIP) on your Mac, you can refer to [this link](https://support.intego.com/hc/en-us/articles/115003523252-How-to-Disable-System-Integrity-Protection-SIP-). Remember to turn SIP back on after you have finished downgrading the app.
+- Frida tools are installed. You can install them by running either of the following commands in the terminal:
+  ```
+  pip install frida-tools
+  ```
+  or
+  ```
+  pip3 install frida-tools
+  ```
+- Proxyman is installed on your Mac and its Root Certificate is trusted. Proxyman can be downloaded [here](https://proxyman.io/), and you can find instructions on how to trust the Root Certificate [here](https://docs.proxyman.io/debug-devices/macos).
 
 ## Downgrading
 
-1. Launch Proxyman, then App Store.
+Follow these steps to downgrade the application:
 
-- Search your target app on the App Store. You must already purchased that app to see the Download button instead of the Get or Purchase button.
+1. Launch Proxyman and open the Mac App Store.
 
-2. Disable SSL Pinning on `appstoreagent`
+   - Search for the target app on the App Store. Make sure you have already purchased the app, as it will display the **Download** button instead of the **Get** or **Purchase** button.
 
-- Run this command using Terminal:
+2. Disable SSL Pinning on `appstoreagent`.
 
-```
-frida appstoreagent -l path_to_disable_ssl_pinning_script
-```
+   - Open the Terminal and run the following command:
 
-- For example:
+   ```
+   frida appstoreagent -l path_to_disable_ssl_pinning_script
+   ```
 
-```
-frida appstoreagent -l ./Downloads/disable_ssl_pinning.js
-```
+   - For example:
 
-3. Enable SSL Proxying on appstoreagent
+   ```
+   frida appstoreagent -l ~/Downloads/disable_ssl_pinning.js
+   ```
 
-- Expand the traffic records on Apps section of Proxyman. Enable SSL Proxying on `appstoreagent` process under right click menu.
+3. Enable SSL Proxying on `appstoreagent`.
 
-![](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/enable-ssl-proxying.png)
+   - In Proxyman, expand the traffic records in the Apps section.
+   - Right-click on the `appstoreagent` process and select **Enable SSL Proxying**.
 
-4. Capture a list of App Version IDs
+   ![Enable SSL Proxying](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/enable-ssl-proxying.png)
 
-- Click on the Download button from App Store to start download your app. After downloaded, MAS failed to install the app because of SSL verification.
+4. Capture a list of App Version IDs.
 
-- Look at response of a request like this: 
+   - Click on the Download button for the app on the App Store to start the download. The download will fail due to SSL verification.
+   - Look at the response of a request like this: `https://p*-buy.itunes.apple.com/WebObjects/MZBuy.woa/wa/buyProduct?guid=*` (the * can be any character or digit). This request is from the `appstoreagent` process in Proxyman.
+   - Find the key `softwareVersionExternalIdentifiers` and locate the list of app version IDs under it. The newest version is at the bottom. Choose the version that you want to downgrade.
+   - *If you're not sure which version you're looking for, don't worry. It's okay to try and fail until you find the right one. Another option is to manually count the number of releases from the old version to the newest one and count backward in the ID list.*
 
-```
-https://p41-buy.itunes.apple.com/WebObjects/MZBuy.woa/wa/buyProduct?guid=*
-```
- from `appstoreagent` process on Proxyman, try to find the key `softwareVersionExternalIdentifiers`. There is a list of app version IDs under this key. The newest version is at the bottom. Choose the version that you want to downgrade.
+   ![App Version IDs](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/app-version-ids.png)
 
-![](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/app-version-ids.png)
+   - Replace `app_version_here` in the following text with your desired app version ID:
 
-- Paste your desired app version id into that text below:
+   ```
+      <key>appExtVrsId</key>
+      <string>app_version_here</string>
+   ```
 
-```
-  <key>appExtVrsId</key>
-  <string>app_version_here</string>
-```
+5. Create a traffic breakpoint.
 
-5. Create a traffic breakpoint
+   - In Proxyman, go to `Tool` > `Breakpoint` > `Rules` from the menu.
+   - Enable the Breakpoint Tool and click the `+` button to create a new breakpoint.
+   - Use the following rule for the breakpoint:
+   
+   ```
+   https://p*-buy.itunes.apple.com/WebObjects/MZBuy.woa/wa/buyProduct?guid*
+   ```
+   
+   ![Create a Breakpoint](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/create-a-breakpoint.png)
 
-- Create a breakpoint for a request from App Store. From Proxyman menu, access `Tool` > `Breakpoint` > `Rules`. Make sure to check `Enable Breakpoint Tool`, then click on `+` button to make a new breakpoint with the following rule:
+6. Re-download the app.
 
-```
-https://p*-buy.itunes.apple.com/WebObjects/MZBuy.woa/wa/buyProduct?guid*
-```
+   - Re-download the app from the App Store. Proxyman will show a window with the breakpoint.
+   - Insert the code block from Step 4 into the request body.
 
-![](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/create-a-breakpoint.png)
+   ![Modify Request Body](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/main/Images/modify-request-body.png)
 
-6. Re-download the app again
+7. Stop the disable-ssl-pinning script.
 
-- Re-download the app again, Proxyman will show a window of breakpoint. Insert the code block on Step 4 into request body
+   - Close the terminal window that was running the command to disable SSL Pinning on `appstoreagent` from Step 2.
 
-![](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/main/Images/modify-request-body.png)
+8. Execute the breakpoint.
 
-7. Stop disable-ssl-pinning script
-
-- Close terminal windows that disable SSL Pinning on `appstoreagent` from Step 2.
-
-8. Execute the breakpoint
-
-- Click on Execute button of Breakpoint windows from Step 6. Your target app will be downloaded and installed with the lower version that you choose.
+   - Click the Execute button in the Breakpoint window from Step 6. The target app will be downloaded and installed with the lower version that you chose.
 
 ## Acknowledgement
 
-- [Azenla](https://gist.github.com/azenla/37f941de24c5dfe46f3b8e93d94ce909)
+- Thanks to [Azenla](https://gist.github.com/azenla/37f941de24c5dfe46f3b8e93d94ce909) for the original code.
 
 ---
+
+If you found this guide helpful, consider supporting the project by buying me a coffee.
 
 <a href="https://paypal.me/ltn119412" target="_blank"><img src="https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/main/Images/buy-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
