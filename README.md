@@ -7,7 +7,6 @@ This guide provides instructions on how to downgrade a specific application from
 Before you begin, make sure you meet the following requirements:
 
 - You have already purchased the target application on the MAS.
-- You have the `disable-ssl-pinning.js` script, which can be downloaded [here](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Scripts/disable-ssl-pinning.js).
 - System Integrity Protection (SIP) is disabled on your Mac. For a detailed instruction on how to disable System Integrity Protection (SIP) on your Mac, you can refer to [this link](https://support.intego.com/hc/en-us/articles/115003523252-How-to-Disable-System-Integrity-Protection-SIP-). Remember to turn SIP back on after you have finished downgrading the app.
 - Frida tools are installed. You can install them by running either of the following commands in the terminal:
   ```
@@ -17,7 +16,15 @@ Before you begin, make sure you meet the following requirements:
   ```
   pip3 install frida-tools
   ```
+
+  You should check the version of Frida you have installed by running the following command in the terminal:
+  ```
+  frida --v
+  ```
+
 - Proxyman is installed on your Mac and its Root Certificate is trusted. Proxyman can be downloaded [here](https://proxyman.io/), and you can find instructions on how to trust the Root Certificate [here](https://docs.proxyman.io/debug-devices/macos).
+
+- You have the `disable-ssl-pinning.js` script, which can be downloaded [here](https://raw.githubusercontent.com/nghlt/Downgrade-MAS-Applications/master/Scripts/disable-ssl-pinning.js). If you are using Frida 16 or older, you will need to use the legacy `disable-ssl-pinning.js` ([download here](https://raw.githubusercontent.com/nghlt/Downgrade-MAS-Applications/master/Scripts/legacy/disable-ssl-pinning.js)).
 
 ## Downgrading
 
@@ -46,7 +53,7 @@ Follow these steps to downgrade the application:
    - In Proxyman, expand the traffic records in the Apps section.
    - Right-click on the `appstoreagent` process and select **Enable SSL Proxying**.
 
-   ![Enable SSL Proxying](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/enable-ssl-proxying.png)
+   ![Enable SSL Proxying](https://raw.githubusercontent.com/nghlt/Downgrade-MAS-Applications/master/Images/enable-ssl-proxying.png)
 
 4. Capture a list of App Version IDs.
 
@@ -55,7 +62,7 @@ Follow these steps to downgrade the application:
    - Find the key `softwareVersionExternalIdentifiers` and locate the list of app version IDs under it. The newest version is at the bottom. Choose the version that you want to downgrade.
    - *If you're not sure which version you're looking for, don't worry. It's okay to try and fail until you find the right one. Another option is to manually count the number of releases from the old version to the newest one and count backward in the ID list.*
 
-   ![App Version IDs](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/app-version-ids.png)
+   ![App Version IDs](https://raw.githubusercontent.com/nghlt/Downgrade-MAS-Applications/master/Images/app-version-ids.png)
 
    - Replace `app_version_here` in the following text with your desired app version ID:
 
@@ -74,14 +81,14 @@ Follow these steps to downgrade the application:
    https://p*-buy.itunes.apple.com/WebObjects/MZBuy.woa/wa/buyProduct?guid*
    ```
    
-   ![Create a Breakpoint](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/master/Images/create-a-breakpoint.png)
+   ![Create a Breakpoint](https://raw.githubusercontent.com/nghlt/Downgrade-MAS-Applications/master/Images/create-a-breakpoint.png)
 
 6. Re-download the app.
 
    - Re-download the app from the App Store. Proxyman will show a window with the breakpoint.
    - Insert the code block from Step 4 into the request body.
 
-   ![Modify Request Body](https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/main/Images/modify-request-body.png)
+   ![Modify Request Body](https://raw.githubusercontent.com/nghlt/Downgrade-MAS-Applications/main/Images/modify-request-body.png)
 
 7. Stop the disable-ssl-pinning script.
 
@@ -94,9 +101,11 @@ Follow these steps to downgrade the application:
 ## Acknowledgement
 
 - Thanks to [Azenla](https://gist.github.com/azenla/37f941de24c5dfe46f3b8e93d94ce909) for the original code.
+- Thanks to [Philip2809](https://gist.github.com/Philip2809) for patching the script for Frida 17.
+- Thanks to [codezi](https://github.com/nghlt/Downgrade-MAS-Applications/pull/4) for the PR.
 
 ---
 
 If you found this guide helpful, consider supporting the project by buying me a coffee.
 
-<a href="https://paypal.me/ltn119412" target="_blank"><img src="https://raw.githubusercontent.com/trungnghiatn/Downgrade-MAS-Applications/main/Images/buy-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+<a href="https://paypal.me/ltn119412" target="_blank"><img src="https://raw.githubusercontent.com/nghlt/Downgrade-MAS-Applications/main/Images/buy-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>

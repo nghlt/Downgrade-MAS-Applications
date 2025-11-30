@@ -2,24 +2,20 @@
  * This Frida script disables SSL pinning and verification on any target macOS Catalina process.
  * https://gist.github.com/azenla/37f941de24c5dfe46f3b8e93d94ce909
  * (c) azenla, 2019
- * Patched for Frida 17 by Philip2809
- * https://gist.github.com/azenla/37f941de24c5dfe46f3b8e93d94ce909?permalink_comment_id=5675248#gistcomment-5675248
+ * Legacy version for Frida 16 and older
  * Used for this repo: https://github.com/nghlt/Downgrade-MAS-Applications
  */
 
-var SecurityModule = Process.getModuleByName('Security');
-var libboringsslModule = Process.getModuleByName('libboringssl.dylib');
-
 var SecTrustEvaluate_handle =
-    SecurityModule.getExportByName('SecTrustEvaluate');
+    Module.findExportByName('Security', 'SecTrustEvaluate');
 var SecTrustEvaluateWithError_handle =
-    SecurityModule.getExportByName('SecTrustEvaluateWithError');
+    Module.findExportByName('Security', 'SecTrustEvaluateWithError');
 var SSL_CTX_set_custom_verify_handle =
-    libboringsslModule.getExportByName('SSL_CTX_set_custom_verify');
+    Module.findExportByName('libboringssl.dylib', 'SSL_CTX_set_custom_verify');
 var SSL_get_psk_identity_handle =
-    libboringsslModule.getExportByName('SSL_get_psk_identity');
-var boringssl_context_set_verify_mode_handle = 
-    libboringsslModule.getExportByName('boringssl_context_set_verify_mode');
+    Module.findExportByName('libboringssl.dylib', 'SSL_get_psk_identity');
+var boringssl_context_set_verify_mode_handle = Module.findExportByName(
+    'libboringssl.dylib', 'boringssl_context_set_verify_mode');
 
 if (SecTrustEvaluateWithError_handle) {
   var SecTrustEvaluateWithError = new NativeFunction(
