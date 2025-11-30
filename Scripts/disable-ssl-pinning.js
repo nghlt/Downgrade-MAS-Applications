@@ -5,16 +5,19 @@
  * Used for this repo: https://github.com/trungnghiatn/Downgrade-MAS-Applications
  */
 
+var SecurityModule = Process.getModuleByName('Security');
+var libboringsslModule = Process.getModuleByName('libboringssl.dylib');
+
 var SecTrustEvaluate_handle =
-    Module.findExportByName('Security', 'SecTrustEvaluate');
+    SecurityModule.getExportByName('SecTrustEvaluate');
 var SecTrustEvaluateWithError_handle =
-    Module.findExportByName('Security', 'SecTrustEvaluateWithError');
+    SecurityModule.getExportByName('SecTrustEvaluateWithError');
 var SSL_CTX_set_custom_verify_handle =
-    Module.findExportByName('libboringssl.dylib', 'SSL_CTX_set_custom_verify');
+    libboringsslModule.getExportByName('SSL_CTX_set_custom_verify');
 var SSL_get_psk_identity_handle =
-    Module.findExportByName('libboringssl.dylib', 'SSL_get_psk_identity');
-var boringssl_context_set_verify_mode_handle = Module.findExportByName(
-    'libboringssl.dylib', 'boringssl_context_set_verify_mode');
+    libboringsslModule.getExportByName('SSL_get_psk_identity');
+var boringssl_context_set_verify_mode_handle = 
+    libboringsslModule.getExportByName('boringssl_context_set_verify_mode');
 
 if (SecTrustEvaluateWithError_handle) {
   var SecTrustEvaluateWithError = new NativeFunction(
