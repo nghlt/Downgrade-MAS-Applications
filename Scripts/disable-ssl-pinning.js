@@ -30,7 +30,9 @@ if (SecTrustEvaluateWithError_handle) {
       new NativeCallback(function(trust, error) {
         console.log('[*] Called SecTrustEvaluateWithError()');
         SecTrustEvaluateWithError(trust, NULL);
-        Memory.writeU8(error, 0);
+        if (!error.isNull()) {
+          error.writePointer(NULL);
+        }
         return 1;
       }, 'int', ['pointer', 'pointer']));
   console.log('[+] SecTrustEvaluateWithError() hook installed.');
@@ -44,7 +46,9 @@ if (SecTrustEvaluate_handle) {
       SecTrustEvaluate_handle, new NativeCallback(function(trust, result) {
         console.log('[*] Called SecTrustEvaluate()');
         SecTrustEvaluate(trust, result);
-        Memory.writeU8(result, 1);
+        if (!result.isNull()) {
+          result.writeU32(1);
+        }
         return 0;
       }, 'int', ['pointer', 'pointer']));
   console.log('[+] SecTrustEvaluate() hook installed.');
@@ -64,15 +68,16 @@ if (SSL_CTX_set_custom_verify_handle) {
       new NativeCallback(function(ctx, mode, callback) {
         console.log('[*] Called SSL_CTX_set_custom_verify()');
         SSL_CTX_set_custom_verify(ctx, 0, replaced_callback);
-      }, 'int', ['pointer', 'int', 'pointer']));
+      }, 'void', ['pointer', 'int', 'pointer']));
   console.log('[+] SSL_CTX_set_custom_verify() hook installed.')
 }
 
 if (SSL_get_psk_identity_handle) {
+  var fakePsk = Memory.allocUtf8String('notarealPSKidentity');
   Interceptor.replace(
       SSL_get_psk_identity_handle, new NativeCallback(function(ssl) {
         console.log('[*] Called SSL_get_psk_identity_handle()');
-        return 'notarealPSKidentity';
+        return fakePsk;
       }, 'pointer', ['pointer']));
   console.log('[+] SSL_get_psk_identity() hook installed.')
 }

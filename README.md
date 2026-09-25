@@ -34,19 +34,26 @@ Follow these steps to downgrade the application:
 
    - Search for the target app on the App Store. Make sure you have already purchased the app, as it will display the **Download** button instead of the **Get** or **Purchase** button.
 
-2. Disable SSL Pinning on `appstoreagent`.
+2. Disable SSL Pinning on `appstoreagent` (or `storekitagent`).
 
    - Open the Terminal and run the following command:
 
-   ```
-   frida appstoreagent -l path_to_disable_ssl_pinning_script
+   ```bash
+   frida -n appstoreagent -l path_to_disable_ssl_pinning_script
    ```
 
    - For example:
 
+   ```bash
+   frida -n appstoreagent -l ~/Downloads/disable-ssl-pinning.js
    ```
-   frida appstoreagent -l ~/Downloads/disable_ssl_pinning.js
-   ```
+
+   > [!TIP]
+   > If the target process is not currently running or you encounter `Failed to spawn: unable to find process with name ...`, use the following command to automatically wait until the process appears and attach immediately without requiring `sudo`:
+   > ```bash
+   > while ! pgrep -x "appstoreagent" > /dev/null; do sleep 0.2; done && frida -n appstoreagent -l ~/Downloads/disable-ssl-pinning.js
+   > ```
+   > *(Note: On newer macOS versions, if the network traffic originates from `storekitagent` instead, simply replace `appstoreagent` with `storekitagent`)*.
 
 3. Enable SSL Proxying on `appstoreagent`.
 
